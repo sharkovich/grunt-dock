@@ -11,80 +11,81 @@ var sinon = require('sinon'),
 
 var build = require('../lib/build.js');
 
-var nop = function() {};
+var nop = function () {
+};
 
 var grunt = {
-  async: nop,
-  log: {
-    ok: nop,
-    writeln: nop,
-    subhead: nop
-  }
+    async: nop,
+    log: {
+        ok: nop,
+        writeln: nop,
+        subhead: nop
+    }
 };
 
 var docker = {
-  listImages: nop,
-  listContainers: nop,
-  buildImage: nop,
-  getImage: nop,
-  getContainer: nop
+    listImages: nop,
+    listContainers: nop,
+    buildImage: nop,
+    getImage: nop,
+    getContainer: nop
 };
 
-describe("build", function() {
+describe("build", function () {
 
-  var stubs = {};
+    var stubs = {};
 
-  before(function(done) {
-    fs.writeFile("./test.tar", "Test file", function(e) {
-      if(e) {
-        console.log(err);
-      }
-      done();
+    before(function (done) {
+        fs.writeFile("./test.tar", "Test file", function (e) {
+            if (e) {
+                console.log(err);
+            }
+            done();
+        });
     });
-  });
 
-  after(function(done) {
-    fs.unlink('./test.tar', function (err) {
-      if (err) {
-        console.log(err);
-      }
-      done();
+    after(function (done) {
+        fs.unlink('./test.tar', function (err) {
+            if (err) {
+                console.log(err);
+            }
+            done();
+        });
     });
-  });
 
-  afterEach(function(done) {
-    for (s in stubs) {
-      stubs[s].restore();
-      delete stubs[s];
-    }
-    done();
-  });
-
-  it("should call done() with error", function (done) {
-
-    stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
-
-    build(grunt, docker, {images: {'test' : {dockerfile: null}}}, function(e) {
-      expect(e).not.to.be.null;
-      done();
+    afterEach(function (done) {
+        for (s in stubs) {
+            stubs[s].restore();
+            delete stubs[s];
+        }
+        done();
     });
-  });
 
-  it("should call docker.buildImage()", function (done) {
+    it("should call done() with error", function (done) {
 
-    stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
+        stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
 
-    build(grunt, docker, {images: {'test' : {dockerfile: './test.tar'}}}, function(e) {
-      expect(docker.buildImage.called).to.be.true;
-      done();
+        build(grunt, docker, {images: {'test': {dockerfile: null}}}, function (e) {
+            expect(e).not.to.be.null;
+            done();
+        });
     });
-  });
+
+    it("should call docker.buildImage()", function (done) {
+
+        stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
+
+        build(grunt, docker, {images: {'test': {dockerfile: './test.tar'}}}, function (e) {
+            expect(docker.buildImage.called).to.be.true;
+            done();
+        });
+    });
 
 
     it("should call docker.buildImage() multiple times", function (done) {
         stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
 
-        build(grunt, docker, {images: {'test' : {dockerfile: './test.tar', tag: ['latest', '1.0.0']}}}, function(e) {
+        build(grunt, docker, {images: {'test': {dockerfile: './test.tar', tag: ['latest', '1.0.0']}}}, function (e) {
             expect(docker.buildImage.called).to.be.true;
             done();
         });
