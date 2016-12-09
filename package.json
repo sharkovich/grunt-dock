@@ -13,8 +13,8 @@
     "docker",
     "dockerode"
   ],
-  "repository": {
-    "type" : "git",
+  "repository": { 
+    "type" : "git", 
     "url" : "https://github.com/JoTrdl/grunt-dock.git"
   },
   "main": "./task/dock",
