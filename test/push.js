@@ -38,7 +38,7 @@ var stream = {
   on : function(event, cb) {
     if (event === "data") {
       return cb("{}");
-    } else {
+    } if (event !== "error") {
       ncalls++;
       return cb();
     }
@@ -158,5 +158,53 @@ describe("push", function() {
       done();
     });
   });
+
+    it("should call docker.push() three times (tags)", function(done) {
+
+        stubs.getImage.restore();
+        stubs.push.restore();
+        stubs.push = sinon.stub(image, "push").yields(null, stream);
+        stubs.getImage = sinon.stub(docker, "getImage").returns({
+            name : "test",
+            push : stubs.push
+        });
+
+        ncalls = 0;
+        push(grunt, docker, {
+            registry : "registry1:5000",
+            auth : {
+                username : "username1",
+                password : "password1"
+            },
+            images : {
+                test : {
+                    dockerfile : null,
+                    tag : ["latest", "0.1.0"],
+                    push : {
+                        docker : {
+                            protocol : "http",
+                            host : "localhost",
+                            port : 2375
+                        }
+                    }
+                },
+                test2 : {
+                    dockerfile : null,
+                    tag : "0.2.0",
+                    push : {
+                        docker : {
+                            protocol : "http",
+                            host : "localhost",
+                            port : 2375
+                        }
+                    }
+                }
+
+            }
+        }, function(e) {
+            expect(ncalls).equal(3);
+            done();
+        });
+    });
 
 });
