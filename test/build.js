@@ -65,7 +65,7 @@ describe("build", function () {
 
         stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
 
-        build(grunt, docker, {images: {'test': {dockerfile: null}}}, function (e) {
+        build(grunt, docker, {registry: 'test', images: {'test': {dockerfile: null}}}, function (e) {
             expect(e).not.to.be.null;
             done();
         });
@@ -75,7 +75,7 @@ describe("build", function () {
 
         stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
 
-        build(grunt, docker, {images: {'test': {dockerfile: './test.tar'}}}, function (e) {
+        build(grunt, docker, {registry: 'test', images: {'test': {dockerfile: './test.tar'}}}, function (e) {
             expect(docker.buildImage.called).to.be.true;
             done();
         });
@@ -85,7 +85,7 @@ describe("build", function () {
     it("should call docker.buildImage() multiple times", function (done) {
         stubs.buildImage = sinon.stub(docker, 'buildImage').yields('error', null);
 
-        build(grunt, docker, {images: {'test': {dockerfile: './test.tar', tag: ['latest', '1.0.0']}}}, function (e) {
+        build(grunt, docker, {registry: 'test', images: {'test': {dockerfile: './test.tar', tag: ['latest', '1.0.0']}}}, function (e) {
             expect(docker.buildImage.called).to.be.true;
             done();
         });
