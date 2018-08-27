@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     }
 
     var options = this.options();
-    var docker = (options.docker) ? new Docker(options.docker) : null;
+    var docker = (options.docker) ? new Docker(options.docker) : new Docker();
     var done = this.async();
 
     var callback = function(e) {
